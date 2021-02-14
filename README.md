@@ -118,12 +118,18 @@ Create tables using provided schema.<br>
 Update *env.rc* file.<br>
 > vi env.rc<br>
 ```
-DBUSER=db2inst1
-DBPASSWORD=db2inst1
-DBURL=jdbc:db2://thinkde:50000/parqdb
-JDBCJAR=/opt/ibm/db2/V11.5/java/db2jcc4.jar
+#DBUSER=db2inst1
+#DBPASSWORD=db2inst1
+#DBURL=jdbc:db2://thinkde:50000/parqdb
+#JDBCJAR=/opt/ibm/db2/V11.5/java/db2jcc4.jar
+
 PARTITIONNUM=8
 BATCHSIZE=500
+
+JDBCJAR=/usr/share/java/postgresql-jdbc.jar
+DBUSER=redhat
+DBPASSWORD=redhat123
+DBURL=jdbc:postgresql://brunette-inf/persistentdb
 ```
 
 Run tests:<br>
