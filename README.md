@@ -1,6 +1,6 @@
 # ParquetJDBC
 
-A simple SPARK/SCALA tool which reads data from Parquet files or directory and insert to JDBC database.
+A simple SPARK/SCALA tool which reads data from Parquet files or directory and inserts to JDBC database.
 
 # Prerequisties
 
