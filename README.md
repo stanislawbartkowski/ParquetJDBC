@@ -88,7 +88,7 @@ c2=2,STRING
 
 The application prepares corresponding *insert* SQL, the number of *?* is equal to number of map properties: *INSERT INTO TESTPAR VALUES (?,?)*<br>
 <br>
-The data is insert into the table using the following method<br>
+The data is inserted into the table using the following method<br>
 ```
 val intVal = r.getAs[Int]('c1')
 st.setInt(1, intVal)
