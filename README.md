@@ -107,6 +107,11 @@ Create tables using provided schema.<br>
 > db2 -tvf  src/test/resource/test1/testschema.sql<br>
 > db2 -tvf  src/test/resource/test2/testschema.sql<br>
 > db2 -tvf  src/test/resource/test3/testschema.sql<br>
+
+> psql -h brunette-inf -U redhat persistentdb <  src/test/resource/test1/testschema.sql 
+> psql -h brunette-inf -U redhat persistentdb <  src/test/resource/test2/testschema.sql 
+> psql -h brunette-inf -U redhat persistentdb <  src/test/resource/test3/testschema.sql 
+
 <br>
 > cp template/env.rc .<br>
 
