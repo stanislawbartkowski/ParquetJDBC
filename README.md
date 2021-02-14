@@ -50,8 +50,8 @@ Property file.<br>
 | password | JDBC connection password | secret
 | table  | Database table where data is inserted | testpar
 
-All other propertiesa are Parquet schema to JDBC mapping.
-
+All other properties are Parquet schema to JDBC mapping.
+<br>
 Format<br>
 * /Parquet column/ = /number:type/
 
@@ -86,7 +86,7 @@ c1=1,INT
 c2=2,STRING
 ```
 
-The application prepares corresponding *insert* SQL, the number of *?* is equal to number of map properties: *INSERT INTO TESTPAR VALUES (?,?)*<br>
+The application prepares corresponding *insert* SQL, the number of *?* is equal to the number of map properties: *INSERT INTO TESTPAR VALUES (?,?)*<br>
 <br>
 The data is inserted into the table using the following method<br>
 ```
