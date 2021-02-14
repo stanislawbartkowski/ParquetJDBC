@@ -2,5 +2,5 @@
 /.idea/
 /project/
 /.bsp/
-param.properties
-env.rc
+/param.properties
+/env.rc
