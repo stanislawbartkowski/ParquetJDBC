@@ -104,7 +104,27 @@ Important: the application does not validate the correctness of JDBC table defin
 # Run the tests provided
 
 Create tables using provided schema.<br>
+> db2 -tvf  src/test/resource/test1/testschema.sql<br>
+> db2 -tvf  src/test/resource/test2/testschema.sql<br>
+> db2 -tvf  src/test/resource/test3/testschema.sql<br>
+<br>
+> cp template/env.rc .<br>
 
+Update *env.rc* file.<br>
+> vi env.rc<br>
+```
+DBUSER=db2inst1
+DBPASSWORD=db2inst1
+DBURL=jdbc:db2://thinkde:50000/parqdb
+JDBCJAR=/opt/ibm/db2/V11.5/java/db2jcc4.jar
+PARTITIONNUM=8
+BATCHSIZE=500
+```
+
+Run tests:<br>
+> ./run.sh 1<br>
+> ./run.sh 2<br>
+> ./run.sh 3<br>
 
 
 
