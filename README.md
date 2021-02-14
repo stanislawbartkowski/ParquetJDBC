@@ -1,11 +1,11 @@
 # ParquetJDBC
 
-A simple SPARK/SCALA tool which reads data from Parquet files or directory and inserts to JDBC database.
+A simple Spark/Scala tool which reads data from Parquet files or directory and inserts to JDBC database.
 
 # Prerequisties
 
 * Java 1.8 or later
-* JDBC driver, tested with DB2 and PostreSQL
+* JDBC driver, tested with DB2 and PostgreSQL
 * sbt
 
 https://www.scala-sbt.org/1.x/docs/Installing-sbt-on-Linux.html
