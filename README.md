@@ -113,6 +113,7 @@ Create tables using provided schema.<br>
 > sed 's/DOUBLE/DOUBLE PRECISION/' src/test/resource/test3/testschema.sql | psql -h brunette-inf -U redhat persistentdb
 
 <br>
+
 > cp template/env.rc .<br>
 
 Update *env.rc* file.<br>
