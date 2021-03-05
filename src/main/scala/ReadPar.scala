@@ -24,12 +24,14 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   private val opart = opt[Int]("numPartitions", descr = "Number of partitions", required = true, short = 'r')
   private val obatch = opt[Int]("batchSize", descr = "Size of batch buffer", required = true, short = 's')
   private val oinput = opt[String]("inputParquet", descr = "Input Parquet file or directory", required = true, short = 'i')
+  private val otest = opt[Boolean]("testConn", descr = "Test connection only and exit", short = 't')
   verify()
 
   val propPath: String = opropPath.getOrElse("")
   val inputFile: String = oinput.getOrElse("")
   val numofParts : Int = opart.getOrElse(-1)
   val batchSize : Int = obatch.getOrElse(-1)
+  val test : Boolean = otest.getOrElse(false);
 
   private val prop = new Properties()
 

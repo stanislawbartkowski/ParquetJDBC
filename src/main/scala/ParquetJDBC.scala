@@ -1,10 +1,11 @@
+import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.{Row, SparkSession}
 
 import java.io.{File, FileInputStream, PrintWriter}
-
-
+import java.net.URL
 import java.sql.{Connection, Date, DriverManager, PreparedStatement}
 import java.util.logging.Logger
+import org.apache.hadoop.hdfs.DistributedFileSystem
 
 
 object ParquetJDBC {
@@ -15,16 +16,30 @@ object ParquetJDBC {
 
   def L(s: String): Unit = log.info(s);
 
+  def P(s: String): Unit = println(s);
+
   def connect(url: String, user: String, password: String): Connection = {
     DriverManager.getConnection(url, user, password)
   }
 
+  def tocols(e: ReadFields.Field): (String, String) = {
+    val cols = e.name.split(",")
+    if (cols.length == 1) (e.name, e.name)
+    else (cols(0), cols(1))
+  }
+
+
   def prepare(table: String, conn: Connection, fields: List[ReadFields.Field]): PreparedStatement = {
-    var s: String = "";
+
+    var s: String = ""
+    var col: String = ""
     for (a <- 1 to fields.length) {
       s = if (a == 1) "?" else s + ",?"
+      val (_, colsql: String) = tocols(fields(a - 1))
+      col = if (a == 1) colsql else col + "," + colsql
     }
-    val query = s"INSERT INTO $table values ($s)"
+    val query = s"INSERT INTO  $table ($col) values ($s)"
+    L(query)
     conn.setAutoCommit(false)
     conn.prepareStatement(query);
   }
@@ -32,25 +47,26 @@ object ParquetJDBC {
   def insert(st: PreparedStatement, r: Row, fields: List[ReadFields.Field]): Unit = {
 
     for (elem <- fields) {
+      val (name,_) = tocols(elem)
       elem.ftype match {
         case ReadFields.FieldType.INT => {
-          val intVal = r.getAs[Int](elem.name)
+          val intVal = r.getAs[Int](name)
           st.setInt(elem.pos, intVal)
         }
         case ReadFields.FieldType.STRING => {
-          val stringVal = r.getAs[String](elem.name)
+          val stringVal = r.getAs[String](name)
           st.setString(elem.pos, stringVal)
         }
         case ReadFields.FieldType.DOUBLE => {
-          val doubleVal = r.getAs[Double](elem.name)
+          val doubleVal = r.getAs[Double](name)
           st.setDouble(elem.pos, doubleVal)
         }
         case ReadFields.FieldType.DECIMAL => {
-          val deciVal = r.getAs[java.math.BigDecimal](elem.name)
+          val deciVal = r.getAs[java.math.BigDecimal](name)
           st.setBigDecimal(elem.pos, deciVal)
         }
         case ReadFields.FieldType.DATE => {
-          val dateVal = r.getAs[java.sql.Date](elem.name)
+          val dateVal = r.getAs[java.sql.Date](name)
           st.setDate(elem.pos, dateVal)
         }
       } // match
@@ -60,12 +76,44 @@ object ParquetJDBC {
     st.addBatch();
   }
 
+  def testconnection(spark: SparkSession, par: Params): Unit = {
+
+    val fs = FileSystem.get(spark.sparkContext.hadoopConfiguration)
+
+    val p: Path = new Path(par.inputFile);
+    P("Testing " + par.inputFile)
+    if (!fs.exists(p)) {
+      P(" -- does not exists")
+    }
+    else {
+      P(" -- exists")
+      P(if (fs.isDirectory(p)) " -- is directory" else " -- is file")
+    }
+
+    P("Testing JDBC connectivity : " + par.url);
+    try {
+      val con: Connection = connect(par.url, par.user, par.password);
+      P("-- connected")
+      con.close();
+    } catch {
+      case e: Exception => {
+        P("-- failed"); e.printStackTrace();
+      }
+    }
+  }
+
   def main(args: Array[String]): Unit = {
     val par = new Params(args)
     val spark = SparkSession
       .builder().master("local[*]")
       .appName("Spark Parquet")
       .getOrCreate()
+
+    if (par.test) {
+      testconnection(spark, par);
+      return;
+    }
+
     val parquetDF = spark.read.parquet(par.inputFile)
     val rdd = parquetDF.repartition(par.numofParts).rdd
     parquetDF.printSchema()
