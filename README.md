@@ -39,6 +39,7 @@ Before launching the application, the corresponding table in JDBC database shoul
 | -p /path/ | Path to property file (look below) | param.properties
 | -r /number/ | Number of Parquet Spark RDD partitions, parallelism level | -r 8
 | -s /number/ | Size of JDBC batch size before commiting | -s 500
+| -t | Test existence of input directory and JDBC connecivity and exits | 
 
 <br>
 Property file.<br>
@@ -46,6 +47,7 @@ Property file.<br>
 | Property | Description | Sample value |
 | ----- | ------ | --------- |
 | url | JDBC URL | jdbc:db2://thinkde:50000/parqdb
+| url SSL | JDBC URL |  jdbc:db2://thinkde:50010/parqdb:sslConnection=true;
 | user | JDBC connection user | db2inst1
 | password | JDBC connection password | secret
 | table  | Database table where data is inserted | testpar
@@ -53,8 +55,9 @@ Property file.<br>
 All other properties are Parquet schema to JDBC mapping.
 <br>
 Format<br>
-* /Parquet column/ = /number:type/
+* /Parquet column, SQL column/ = /number:type/
 
+* SQL column is optional, if not provided, the same as Parquet column
 * number: JDBC *set* column number, starts from 1 (not 0).
 * type: INT,DOUBLE,STRING,DATE,DECIMAL
 
@@ -86,7 +89,16 @@ c1=1,INT
 c2=2,STRING
 ```
 
-The application prepares corresponding *insert* SQL, the number of *?* is equal to the number of map properties: *INSERT INTO TESTPAR VALUES (?,?)*<br>
+Assuming table schema using different column names:<br>
+```
+CREATE TABLE TESTPAR (ID INT, C2 NAME(100));
+```
+```
+c1,ID=1,INT
+c2,NAME=2,STRING
+```
+
+The application prepares corresponding *insert* SQL, the number of *?* is equal to the number of map properties: *INSERT INTO TESTPAR VALUES (col names) (?,?)*<br>
 <br>
 The data is inserted into the table using the following method<br>
 ```
@@ -137,10 +149,3 @@ Run tests:<br>
 > ./run.sh 1<br>
 > ./run.sh 2<br>
 > ./run.sh 3<br>
-
-
-
-
-
-
-
