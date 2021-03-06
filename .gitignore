@@ -4,3 +4,9 @@
 /.bsp/
 /src/test/resource/test4/
 /src/test/resource/test5/
+/src/test/resource/test4/
+/env.rc
+/param.properties
+/param.source
+/run.sh
+

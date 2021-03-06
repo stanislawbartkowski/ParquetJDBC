@@ -126,7 +126,7 @@ object ParquetJDBC {
     val batchSize = par.batchSize
     val table = par.table
 
-    val fields: List[ReadFields.Field] = ReadFields.readList(par.propPath, par.IsPropert)
+    val fields: List[ReadFields.Field] = ReadFields.readList(par.propPath, par.IsPropert).sortBy(_.pos)
 
     val f: File = new File(par.inputFile)
     if (!f.exists()) {
