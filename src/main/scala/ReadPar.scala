@@ -5,14 +5,19 @@ import java.util.Properties
 
 class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
 
-  def IsPropert(f : String) : Boolean = params contains f
+  def IsProperty(f: String): Boolean = (params contains f) || (paramsout contains f)
 
   private val urlpar = "url"
   private val urluser = "user"
   private val urlpassword = "password"
   private val tablenamepar = "table"
 
-  private val params : Set[String] = Set(urlpar,urluser,urlpassword,tablenamepar)
+  private val diroutpar = "dirout"
+  private val delimpar = "delim"
+  private val fileoutpar = "fileout"
+
+  private val params: Set[String] = Set(urlpar, urluser, urlpassword, tablenamepar)
+  private val paramsout: Set[String] = Set(diroutpar, delimpar, fileoutpar)
 
   banner(
     """
@@ -29,16 +34,18 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
 
   val propPath: String = opropPath.getOrElse("")
   val inputFile: String = oinput.getOrElse("")
-  val numofParts : Int = opart.getOrElse(-1)
-  val batchSize : Int = obatch.getOrElse(-1)
-  val test : Boolean = otest.getOrElse(false);
+  val numofParts: Int = opart.getOrElse(-1)
+  val batchSize: Int = obatch.getOrElse(-1)
+  val test: Boolean = otest.getOrElse(false);
 
   private val prop = new Properties()
 
   println(System.getProperty("user.dir"))
   prop.load(new FileInputStream(propPath))
 
-  for (n <- params)
+  val connect = prop.getProperty(urlpar) != null
+
+  for (n <- if (connect) params else paramsout)
     if (prop.getProperty(n) == null) {
       println(s"$propPath - parameter $n expected")
       System.exit(4)
@@ -48,4 +55,7 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   val user = prop.getProperty(urluser)
   val password = prop.getProperty(urlpassword)
   val table = prop.getProperty(tablenamepar)
+  val outdir: String = prop.getProperty(diroutpar)
+  val delim: String = prop.getProperty(delimpar)
+  val fileout: String = prop.getProperty(fileoutpar)
 }
