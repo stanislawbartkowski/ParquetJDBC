@@ -2,10 +2,12 @@ import Helper.{L, connect}
 import org.apache.spark.TaskContext
 import org.apache.spark.rdd.RDD
 import org.apache.spark.sql.Row
+import rest.{SparkLoadToWarehouse, WarehouseCred}
 
 import java.io.{BufferedWriter, File, FileWriter}
 import java.nio.file.{Files, Path, Paths}
 import java.sql.Date
+import scala.sys.process._
 
 object ExportText {
 
@@ -52,13 +54,26 @@ object ExportText {
     val outdir: String = par.outdir
     val delim: String = par.delim
     val outfile : String = par.fileout
+    val resttable = par.resttable
+    val restschema = par.restschema
+    var isrest = par.rest
 
-    var no: Int = 0
+    val cred = par.cred
 
     rdd.foreachPartition(f => {
       testDirectory(outdir)
       val partid = TaskContext.getPartitionId()
-      val ff : File = new File(outdir,s"$outfile-$partid")
+      val expfile = s"$outfile-$partid"
+      val partable = s"$resttable$partid"
+
+      val load = SparkLoadToWarehouse(cred,expfile,restschema,partable,resttable,delim)
+      if (isrest) load.init
+
+      val cmd = "uname -a" // Your command
+      val output = cmd.!! // Captures the output
+
+/*
+      val ff : File = new File(outdir,expfile)
       val  bw = new BufferedWriter(new FileWriter(ff))
 
       L("START: ==============");
@@ -68,13 +83,19 @@ object ExportText {
       for (r <- f) {
         st.clear()
         insertC.insert(r, fields)
-//        Helper.P(st.toString())
         bw.write(st.toString())
         bw.newLine()
         i = i + 1
         if (i % 100 == 0) Helper.L(s"$partid $i")
       }
       bw.close()
+
+ */
+      if (isrest) {
+        load.loadJob
+        load.close
+      }
+
     })
   }
 

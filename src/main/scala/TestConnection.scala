@@ -1,6 +1,7 @@
 import Helper.{P, connect}
 import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.SparkSession
+import rest.LoadWarehouse
 
 import java.sql.Connection
 
@@ -20,6 +21,15 @@ object TestConnection {
       P(if (fs.isDirectory(p)) " -- is directory" else " -- is file")
     }
 
+    if (par.rest) {
+      P(s" -- check connection to ${par.cred.url}")
+      val sload = new LoadWarehouse(par.cred)
+      sload.acquireToken()
+      sload.releaseToken
+      P(" -- can connect")
+    }
+    P("")
+
     if (par.connect) {
       P("Testing JDBC connectivity : " + par.url);
       try {
@@ -35,7 +45,7 @@ object TestConnection {
     }
     else {
       P(" Export to directory")
-      P(" JDBC conenctivity is not tested")
+      P(" JDBC connectivity is not tested")
     }
   }
 

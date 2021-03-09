@@ -1,11 +1,12 @@
 import org.rogach.scallop.ScallopConf
+import rest.WarehouseCred
 
 import java.io.FileInputStream
 import java.util.Properties
 
 class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
 
-  def IsProperty(f: String): Boolean = (params contains f) || (paramsout contains f)
+  def IsProperty(f: String): Boolean = (params contains f) || (paramsout contains f) || (paramsrest contains f)
 
   private val urlpar = "url"
   private val urluser = "user"
@@ -16,8 +17,20 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   private val delimpar = "delim"
   private val fileoutpar = "fileout"
 
+  private val resturlpar = "resturl"
+  private val restuserpar = "restuser"
+  private val restpasswordpar = "restpassword"
+  private val restschemapar = "restschema"
+  private val resttablepar = "resttable"
+  private val AWSKEYpar = "AWSKEY"
+  private val AWSSECRETKEYpar = "AWSSECRETKEY"
+  private val ENDPOINTpar = "ENDPOINT"
+  private val BUCKETpar = "BUCKET"
+
+
   private val params: Set[String] = Set(urlpar, urluser, urlpassword, tablenamepar)
   private val paramsout: Set[String] = Set(diroutpar, delimpar, fileoutpar)
+  private val paramsrest : Set[String] = Set(resturlpar,restuserpar,restpasswordpar,restschemapar,resttablepar,AWSKEYpar,AWSSECRETKEYpar,ENDPOINTpar,BUCKETpar)
 
   banner(
     """
@@ -44,8 +57,10 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   prop.load(new FileInputStream(propPath))
 
   val connect = prop.getProperty(urlpar) != null
+  val rest = prop.getProperty(resturlpar) != null
 
-  for (n <- if (connect) params else paramsout)
+  val keys: Set[String] = if (connect) params else if (rest)  paramsrest else paramsout
+  for (n <- keys)
     if (prop.getProperty(n) == null) {
       println(s"$propPath - parameter $n expected")
       System.exit(4)
@@ -58,4 +73,18 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   val outdir: String = prop.getProperty(diroutpar)
   val delim: String = prop.getProperty(delimpar)
   val fileout: String = prop.getProperty(fileoutpar)
+
+  private val resturl = prop.getProperty(resturlpar)
+  private val restuser = prop.getProperty(restuserpar)
+  private val restpassword = prop.getProperty(restpasswordpar)
+  val restschema = prop.getProperty(restschemapar)
+  val resttable = prop.getProperty(resttablepar)
+
+  private val ENDPOINT = prop.getProperty(ENDPOINTpar)
+  private val BUCKET = prop.getProperty(BUCKETpar)
+  private val AWSKEY = prop.getProperty(AWSKEYpar)
+  private val AWSSECRETKEY = prop.getProperty(AWSSECRETKEYpar)
+
+  val cred = WarehouseCred(restuser,restpassword,resturl,AWSKEY,AWSSECRETKEY,ENDPOINT,BUCKET)
+
 }

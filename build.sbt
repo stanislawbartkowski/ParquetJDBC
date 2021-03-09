@@ -13,6 +13,13 @@ libraryDependencies += "org.apache.spark" %% "spark-sql" % "2.4.7"
 // https://mvnrepository.com/artifact/org.rogach/scallop
 libraryDependencies += "org.rogach" %% "scallop" % "4.0.2"
 
+// https://mvnrepository.com/artifact/com.typesafe.play/play-json
+//libraryDependencies += "com.typesafe.play" %% "play-json" % "2.10.0-RC2"
+
+// https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
+libraryDependencies += "com.squareup.okhttp3" % "okhttp" % "4.9.1"
+
+
 val meta = """META.INF(.)*""".r
 assemblyMergeStrategy in assembly := {
   case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
