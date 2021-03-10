@@ -27,6 +27,12 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   private val ENDPOINTpar = "ENDPOINT"
   private val BUCKETpar = "BUCKET"
 
+  private val ALLREST=0
+  private val TEXTONLY=1
+  private val RESTONLY=2
+
+  def isText = jobtype == TEXTONLY || jobtype == ALLREST
+  def isRest = jobtype == RESTONLY || jobtype == ALLREST
 
   private val params: Set[String] = Set(urlpar, urluser, urlpassword, tablenamepar)
   private val paramsout: Set[String] = Set(diroutpar, delimpar, fileoutpar)
@@ -43,6 +49,7 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   private val obatch = opt[Int]("batchSize", descr = "Size of batch buffer", required = true, short = 's')
   private val oinput = opt[String]("inputParquet", descr = "Input Parquet file or directory", required = true, short = 'i')
   private val otest = opt[Boolean]("testConn", descr = "Test connection only and exit", short = 't')
+  private val ojobtype = opt[Int]("jobtype in case of rest", descr = "0 - text and rest (default), 1 - text only, 2 - rest only", short = 'j')
   verify()
 
   val propPath: String = opropPath.getOrElse("")
@@ -50,6 +57,7 @@ class Params(arguments: Seq[String]) extends ScallopConf(arguments) {
   val numofParts: Int = opart.getOrElse(-1)
   val batchSize: Int = obatch.getOrElse(-1)
   val test: Boolean = otest.getOrElse(false);
+  private val jobtype : Int = ojobtype.getOrElse(0)
 
   private val prop = new Properties()
 

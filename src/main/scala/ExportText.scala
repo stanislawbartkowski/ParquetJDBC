@@ -56,7 +56,8 @@ object ExportText {
     val outfile : String = par.fileout
     val resttable = par.resttable
     val restschema = par.restschema
-    var isrest = par.rest
+    val isrest = par.rest && par.isRest
+    val istext = par.isText
 
     val cred = par.cred
 
@@ -69,28 +70,28 @@ object ExportText {
       val load = SparkLoadToWarehouse(cred,expfile,restschema,partable,resttable,delim)
       if (isrest) load.init
 
-      val cmd = "uname -a" // Your command
-      val output = cmd.!! // Captures the output
+//      val cmd = "uname -a" // Your command
+//      val output = cmd.!! // Captures the output
 
-/*
-      val ff : File = new File(outdir,expfile)
-      val  bw = new BufferedWriter(new FileWriter(ff))
+      if (istext) {
+        val ff: File = new File(outdir, expfile)
+        val bw = new BufferedWriter(new FileWriter(ff))
 
-      L("START: ==============");
-      val st: StringBuilder = new StringBuilder
-      val insertC = new CreateLine(st, delim)
-      var i = 0
-      for (r <- f) {
-        st.clear()
-        insertC.insert(r, fields)
-        bw.write(st.toString())
-        bw.newLine()
-        i = i + 1
-        if (i % 100 == 0) Helper.L(s"$partid $i")
+        L("START: ==============");
+        val st: StringBuilder = new StringBuilder
+        val insertC = new CreateLine(st, delim)
+        var i = 0
+        for (r <- f) {
+          st.clear()
+          insertC.insert(r, fields)
+          bw.write(st.toString())
+          bw.newLine()
+          i = i + 1
+          if (i % 100 == 0) Helper.L(s"$partid $i")
+        }
+        bw.close()
       }
-      bw.close()
 
- */
       if (isrest) {
         load.loadJob
         load.close
