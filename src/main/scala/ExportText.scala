@@ -87,7 +87,7 @@ object ExportText {
           bw.write(st.toString())
           bw.newLine()
           i = i + 1
-          if (i % 100 == 0) Helper.L(s"$partid $i")
+          if (i % 1000 == 0) Helper.L(s"$partid $i")
         }
         bw.close()
       }
