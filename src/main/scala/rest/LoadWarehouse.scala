@@ -23,6 +23,11 @@ class LoadWarehouse(val cred: WarehouseCred) {
 
   val sleepSec = 5
 
+  private def throwserror(mess: String) = {
+    log.severe(mess)
+    throw new WarehouseException(mess)
+  }
+
   private def throwserror(code: Int, mess: String) = {
     val errmess = s"Response code $code $mess"
     log.severe(errmess)
@@ -45,7 +50,7 @@ class LoadWarehouse(val cred: WarehouseCred) {
     jobid = Option(id)
   }
 
-  def LoadWait(mess : String) = {
+  def LoadWait(mess: String) = {
     L("Waiting for load to be completed")
     var waitforload = true
     while (waitforload) {
@@ -56,7 +61,7 @@ class LoadWarehouse(val cred: WarehouseCred) {
         WarehouseRestApi.logerrors(j)
         throwserror(code, "Cannot monitor the load job because of internal error")
       }
-      L(status)
+      L(s"Status reported $status")
       status match {
         case "Success" => {
           L("Completed with success")
@@ -65,9 +70,13 @@ class LoadWarehouse(val cred: WarehouseCred) {
         case "Interrupted" | "Load in progress" => {
           L("Still running")
         }
+        case "Failed" => {
+          WarehouseRestApi.logerrors(jsta)
+          throwserror(s"$mess load job reported as failed")
+        }
         case _ => {
           WarehouseRestApi.logerrors(jsta)
-          throwserror(Response.Status.BAD_REQUEST.getStatusCode, "Failure, cannot complete")
+          throwserror(s"$mess not expected status, cannot complete ($status)")
         }
       } // match
     } // while
@@ -115,7 +124,7 @@ class LoadWarehouse(val cred: WarehouseCred) {
 
   def deleteJob = {
     L("Remove load job logs")
-    val (code,j) = WarehouseRestApi.deleteLoadJob(cred, token.get,jobid.get)
+    val (code, j) = WarehouseRestApi.deleteLoadJob(cred, token.get, jobid.get)
     if (code != Response.Status.OK.getStatusCode) {
       WarehouseRestApi.logerrors(j)
       throwserror(code, "Deleting load job failed")

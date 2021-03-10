@@ -3,6 +3,7 @@ import org.apache.hadoop.fs.{FileSystem, Path}
 import org.apache.spark.sql.SparkSession
 import rest.LoadWarehouse
 
+import java.io.File
 import java.sql.Connection
 
 object TestConnection {
@@ -48,5 +49,4 @@ object TestConnection {
       P(" JDBC connectivity is not tested")
     }
   }
-
 }

@@ -54,7 +54,6 @@ object WarehouseRestApi {
       case Success(response) => response
       case Failure(response) => null
     }
-    //    }  response = client.newCall(request).execute
     val i: InputStream = response.body().byteStream()
     val reader = new InputStreamReader(i)
     val text = CharStreams.toString(reader)
