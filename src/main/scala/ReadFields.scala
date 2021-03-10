@@ -31,7 +31,7 @@ object ReadFields {
         System.exit(4)
       }
       val vals = prop.get(key).toString.split(",")
-      val ftype: FieldType.FieldType = FieldType.withName(vals(1))
+      val ftype: FieldType.FieldType = FieldType.withName(vals(1).trim)
 
       l = l :+ Field(rddinde, rname, vals(0).toInt, sname, ftype)
     }
