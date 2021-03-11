@@ -24,7 +24,7 @@ object RestTestMain {
     val cred = WarehouseCred(user, password, url, AWSKEY, AWSSECRETKEY, ENDPOINT, BUCKET)
     val load = SparkLoadToWarehouse(cred,path,schema, table,tabledest,delim)
     load.init
-    load.loadJob
+    load.loadJob(0)
     load.close
 
 //    val load = new LoadWarehouse(cred)

@@ -1,5 +1,7 @@
 package rest
 
+import org.apache.spark.sql.execution.streaming.CommitMetadata.format
+
 import java.util.logging.Logger
 import javax.ws.rs.core.Response
 
@@ -50,13 +52,18 @@ class LoadWarehouse(val cred: WarehouseCred) {
     jobid = Option(id)
   }
 
-  def LoadWait(mess: String) = {
+  def LoadWait(mess: String, norows: Int) = {
     L("Waiting for load to be completed")
     var waitforload = true
     while (waitforload) {
       Thread.sleep(sleepSec * 1000)
       L(s"Checking $mess")
       val (code, j, status, jsta) = WarehouseRestApi.getListOfJobs(cred, token.get, jobid.get)
+      val rows_rejected = (jsta \ "rows_rejected").extract[Int]
+      val rows_deleted = (jsta \ "rows_deleted").extract[Int]
+      val rows_committed = (jsta \ "rows_committed").extract[Int]
+      L(s"rows_rejected:$rows_rejected rows_deleted: $rows_deleted rows_commited: $rows_committed")
+
       if (code != Response.Status.OK.getStatusCode) {
         WarehouseRestApi.logerrors(j)
         throwserror(code, "Cannot monitor the load job because of internal error")
@@ -69,6 +76,11 @@ class LoadWarehouse(val cred: WarehouseCred) {
         }
         case "Interrupted" | "Load in progress" => {
           L("Still running")
+          if (norows != 0 && (rows_rejected + rows_deleted + rows_committed >= norows)) {
+            L(s"Number of rows committed exceeded number pf rows expected $norows ")
+            L("Assuming loading completed although still interrupted")
+            waitforload = false
+          }
         }
         case "Failed" => {
           WarehouseRestApi.logerrors(jsta)

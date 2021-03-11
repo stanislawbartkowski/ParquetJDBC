@@ -73,6 +73,7 @@ object ExportText {
 //      val cmd = "uname -a" // Your command
 //      val output = cmd.!! // Captures the output
 
+      var i = 0
       if (istext) {
         val ff: File = new File(outdir, expfile)
         val bw = new BufferedWriter(new FileWriter(ff))
@@ -80,7 +81,6 @@ object ExportText {
         L("START: ==============");
         val st: StringBuilder = new StringBuilder
         val insertC = new CreateLine(st, delim)
-        var i = 0
         for (r <- f) {
           st.clear()
           insertC.insert(r, fields)
@@ -93,7 +93,8 @@ object ExportText {
       }
 
       if (isrest) {
-        load.loadJob
+        i = f.length
+        load.loadJob(i)
         load.close
       }
 

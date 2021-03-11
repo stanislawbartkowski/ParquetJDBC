@@ -28,7 +28,7 @@ object WarehouseRestApi {
   private def execute(client: OkHttpClient, request: Request): Try[Response] =
     Try(client.newCall(request).execute)
 
-  private def runexecute(client: OkHttpClient, request: Request): Response = {
+  private def runexecute(client: OkHttpClient, request: Request): Try[Response] = {
     var response: Response = null
     var i = 0
     val no = 3
@@ -45,19 +45,22 @@ object WarehouseRestApi {
         }
       } // match
     } // while
-    response
+    Success(response)
   }
 
 
   private def executeResponse(client: OkHttpClient, request: Request): (Int, JValue) = {
-    val response: Response = execute(client, request) match {
+    val response: Response = runexecute(client, request) match {
       case Success(response) => response
       case Failure(response) => null
     }
-    val i: InputStream = response.body().byteStream()
-    val reader = new InputStreamReader(i)
-    val text = CharStreams.toString(reader)
-    (response.code(), if (text == "") JsonAST.JNull else parse(text))
+    if (response == null) (Status.NOT_FOUND.getStatusCode,JsonAST.JNull)
+    else {
+      val i: InputStream = response.body().byteStream()
+      val reader = new InputStreamReader(i)
+      val text = CharStreams.toString(reader)
+      (response.code(), if (text == "") JsonAST.JNull else parse(text))
+    }
   }
 
   private def makePostRestCall(cred: WarehouseCred, token: Option[String], rest: String, call: JObject): (Int, JValue) = {

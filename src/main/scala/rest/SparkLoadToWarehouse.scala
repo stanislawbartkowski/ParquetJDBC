@@ -13,12 +13,12 @@ case class SparkLoadToWarehouse(cred: WarehouseCred, inputpath: String, schema :
     load.waitForSQL
   }
 
-  def loadJob = {
+  def loadJob(norows: Int) = {
     load.runSQL(s"TRUNCATE TABLE $schema.$table IMMEDIATE")
     load.waitForSQL
 
     load.LoadJob(inputpath, schema, table, delim)
-    load.LoadWait(s"$inputpath into $schema.$table")
+    load.LoadWait(s"$inputpath into $schema.$table",norows)
 
     load.runSQL(s"INSERT INTO $schema.$tabledest (SELECT * FROM $schema.$table)")
     load.waitForSQL
