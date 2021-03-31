@@ -84,9 +84,9 @@ Example:
 
 Assuming *-r* parameter as 4. The application creates in local file system four files.<br.
 * /mnt/s3/sbtest/out1/export-0
-* /mnt/s3/sbtest/out1/export-0
-* /mnt/s3/sbtest/out1/export-0
-* /mnt/s3/sbtest/out1/export-0
+* /mnt/s3/sbtest/out1/export-1
+* /mnt/s3/sbtest/out1/export-2
+* /mnt/s3/sbtest/out1/export-3
 
 The DB2 Warehouse load REST/API is called and AWS Object Store parameters are passed: AWSKEY,AWSSECRETKEY, ENDPOINT and BUCKET. As a input text file, /sbtest/out1/export-0, /sbtest/out1/export-1, /sbtest/out1/export-2, /sbtest/out1/export-3 are used. Directory mount point */mnt/s3/* is valid only on local file system, in AWS bucket the correct file name is */mnt/s3/sbtest/out1/export-n*.
 
