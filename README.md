@@ -44,13 +44,34 @@ Before launching the application, the corresponding table in JDBC database shoul
 <br>
 Property file.<br>
 
+JDBC insert loading.<br>
+
 | Property | Description | Sample value |
 | ----- | ------ | --------- |
-| url | JDBC URL | jdbc:db2://thinkde:50000/parqdb
-| url SSL | JDBC URL |  jdbc:db2://thinkde:50010/parqdb:sslConnection=true;
+| url | URL | jdbc:db2://thinkde:50000/parqdb
+| url (if SSL) | JDBC URL |  jdbc:db2://thinkde:50010/parqdb:sslConnection=true;
 | user | JDBC connection user | db2inst1
 | password | JDBC connection password | secret
 | table  | Database table where data is inserted | testpar
+| AWSKEY | | empty, do not set
+| AWSSECRETKEY | | empty, do not set
+| ENDPOINT |  | empty, do not set
+| BUCKET| | empty, do not set
+
+
+DB2 Warehouse Rest/API loading from S3 AWS
+
+| Property | Description | Sample value |
+| ----- | ------ | --------- |
+| url | | empty, do not set
+| user |  | empty, do not set
+| password | | empty, do not set
+| table  | Database table where data is inserted | testpar
+| AWSKEY | AWS access credentials, AWS_ACCESS_KEY_ID | xxxxx
+| AWSSECRETKEY | AWS access credentials,  AWS_SECRET_ACCESS_KEY |  xxxxx
+| ENDPOINT |  | s3-us-west-2.amazonaws.com
+| BUCKET| | wdftya-kops-state-store
+
 
 All other properties are Parquet schema to JDBC mapping.
 <br>
