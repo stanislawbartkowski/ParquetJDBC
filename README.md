@@ -73,6 +73,10 @@ DB2 Warehouse Rest/API loading from S3 AWS
 | BUCKET| | wdftya-kops-state-store
 | dirout| Mount S3 point on local file system | /mnt/s3/
 | fileout | Subdirectory and file prefix to create delimited filr | sbtest/out1/export
+| resturl | URL to DB2 Warehouse instance | dashdb-txn-srty-yp-awl09-71.services.dal.bluemix.net |
+| restuser | DB2 Warehouse user authorized for data loading  | amx11013
+| restpassword | DB2 Warehouse password | secret
+| restschema | DB2 Warehouse schema name, usually equal to user name | AMX11013
 
 More on *dirout* and *fileout*. <br>
 
