@@ -71,6 +71,26 @@ DB2 Warehouse Rest/API loading from S3 AWS
 | AWSSECRETKEY | AWS access credentials,  AWS_SECRET_ACCESS_KEY |  xxxxx
 | ENDPOINT |  | s3-us-west-2.amazonaws.com
 | BUCKET| | wdftya-kops-state-store
+| dirout| Mount S3 point on local file system | /mnt/s3/
+| fileout | Subdirectory and file prefix to create delimited filr | sbtest/out1/export
+
+More on *dirout* and *fileout*. <br>
+
+The application is firstly generating delimited text in *dirout*/*fileout*-/<number/>  file. When file is ready, then DB2 Warehouse REST/API is launched to load data from S3 bucket and as an input text file is passed *fileout*-/<number/> in appropriate S3 bucker.<br>
+
+Example:
+* Local mount point for S3 bucket: /mnt/s3<br>
+* File name in S3 mount: /sbtest/out1/export<br>
+
+Assuming *-r* parameter as 4. The application creates in local file system four files.<br.
+* /mnt/s3/sbtest/out1/export-0
+* /mnt/s3/sbtest/out1/export-0
+* /mnt/s3/sbtest/out1/export-0
+* /mnt/s3/sbtest/out1/export-0
+
+The DB2 Warehouse load REST/API is called and AWS Object Store parameters are passed: AWSKEY,AWSSECRETKEY, ENDPOINT and BUCKET. As a input text file, /sbtest/out1/export-0, /sbtest/out1/export-1, /sbtest/out1/export-2, /sbtest/out1/export-3 are used. Directory mount point */mnt/s3/* is valid only on local file system, in AWS bucket the correct file name is */mnt/s3/sbtest/out1/export-n*.
+
+<br>
 
 
 All other properties are Parquet schema to JDBC mapping.
